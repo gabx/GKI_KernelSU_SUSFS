@@ -192,6 +192,19 @@ jobs:
               ;;
           esac
 
+      - name: Forcer CONFIG_PID_NS pour DroidSpace
+        shell: bash
+        run: |
+          echo "Activation de CONFIG_PID_NS=y dans les fichiers de configuration..."
+          find . -name "gki_defconfig" -o -name "*_defconfig" | while read -r config_file; do
+            if grep -q "CONFIG_PID_NS" "$config_file"; then
+              sed -i 's/.*CONFIG_PID_NS.*/CONFIG_PID_NS=y/' "$config_file"
+            else
+              echo "CONFIG_PID_NS=y" >> "$config_file"
+            fi
+            echo "Mis à jour avec succès : $config_file"
+          done
+
       - name: Resolve latest component commits
         id: resolve
         shell: bash
